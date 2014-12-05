@@ -1,0 +1,40 @@
+//Mips 32 bit ALU
+//@author-> Hesham Mohamed
+//Date: 5/12/2014
+//version 1
+
+
+module ALU(aluResult, zero, input1, input2, aluOperation, clk);
+input[31:0] input1, input2;
+input[3:0] aluOperation;
+input clk;
+output[31:0] aluResult;
+output zero;
+reg[31:0] aluResult;
+reg zero;
+
+always@(posedge clk) //alu bitwise operations depending on ALU control unit 
+begin
+	if(aluOperation == 0000)        //and
+		aluResult <= input1 & input2;
+	else if(aluOperation == 0001)   //or
+		aluResult <= input1 | input2;
+	else if(aluOperation == 1100)    //bitwise nor
+		aluResult <= ~(input1 | input2); 
+	else if(aluOperation == 0111) //slt
+		begin
+			if($signed(input1) < $signed(input2))
+				aluResult <= 1;
+			else 
+				aluResult <= 0; 
+		end
+	else if(aluOperation == 0010)  //add
+		aluResult <= $signed(input1) + $signed(input2);
+	else if(aluOperation == 0110)  //sub
+		begin
+			aluResult <= $signed(input1) - $signed(input2);
+			if(aluResult == 0)
+			zero <= 1;
+		end
+end
+endmodule
