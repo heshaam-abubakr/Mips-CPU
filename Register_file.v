@@ -10,6 +10,7 @@ input[4:0] rs,rt,writeReg;
 input[31:0] writeData;
 output[31:0] readata1,readata2;
 reg[31:0] readata1,readata2;
+integer i;
 
 /*reg[31:0] zero,at,ra;
 reg[31:0] v0,v1;
@@ -23,19 +24,31 @@ reg[31:0] reg_file[0:31];
 always@(posedge clk) // for writing Register
 begin
    if(regWrite)
-	begin
-		if(writeReg==0)
-		   reg_file[0]<=0;                          
-		else
-		   reg_file[regWrite]<=writeData; 
-
-  	end
+   begin
+	if(writeReg==0)
+		begin
+		   reg_file[0] =0;     
+		end
+	else                     
+		   reg_file[writeReg]<=writeData;	
+	 
+   end
 end
 
-always@(negedge clk) // for reading 2 registers
+always @(negedge clk) // for reading 2 registers
 begin 
   	 readata1<=reg_file[rs];
   	 readata2<=reg_file[rt];
 end
+
+initial
+begin
+	
+	reg_file[16]<=5;
+	reg_file[17]<=35;
+
+end
+
+
 
 endmodule
