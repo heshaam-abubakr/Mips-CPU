@@ -1,0 +1,93 @@
+//Mips 32 bit ALU
+//@author-> Hesham Mohamed
+//Date: 5/12/2014
+//version 1
+
+
+module ALU(aluResult, zero, overFlow, input1, input2, aluOperation, shamt);
+input[31:0] input1; //rs
+input[31:0] input2; //rt
+input[3:0] aluOperation; //4bits from the ALU control
+input[4:0] shamt; //shift amount
+output reg[31:0] aluResult;
+output reg zero;
+output reg overFlow;
+reg overFlowLogic;
+
+always@(aluOperation or input1 or input2 or aluResult or overFlowLogic) //alu operations depending on ALU control unit 
+begin
+	if(aluOperation == 4'b0000)        //bitwise and
+		aluResult <= input1 & input2;
+
+	else if(aluOperation == 4'b0001)   //bitwise or
+		aluResult <= input1 | input2;
+
+	else if(aluOperation == 4'b0010)    //bitwise nor
+		aluResult <= ~(input1 | input2);
+ 
+	else if(aluOperation == 4'b0011) //slt
+		begin
+			if($signed(input1) < $signed(input2))
+				aluResult <= 1;
+			else 
+				aluResult <= 0; 
+		end
+	else if(aluOperation == 4'b0100)begin  //add
+		aluResult = input1 + input2;
+		overFlowLogic = input1[31]&input2[31]&~aluResult[31] | ~input1[31]&~input2[31]&aluResult[31];
+		if(overFlowLogic)
+			overFlow<=1;	
+		else
+			overFlow<=0;
+	end	
+	else if(aluOperation == 4'b0101)  //sub
+		begin
+			aluResult = input1 - input2;
+			overFlowLogic = input1[31]&(1^input2[31])&~aluResult[31] | ~input1[31]&~(1^input2[31])&aluResult[31];
+			if(overFlowLogic)
+				overFlow<=1;	
+			else
+				overFlow<=0;
+			if(aluResult == 0) 
+				zero <= 1;
+		end
+	else if(aluOperation == 4'b0110)  //sll
+		 aluResult <= input2 << shamt;
+end
+endmodule
+
+
+
+module testing(input1, input2, aluOperation, shamt, aluResult, zero, overFlow);
+
+output reg[31:0] input1; //rs
+output reg[31:0] input2; //rt
+output reg[3:0] aluOperation;
+output reg[4:0] shamt;
+input wire[31:0] aluResult;
+input wire zero;
+input wire overFlow;
+initial begin
+   	$monitor("@ time",$time, " %b, %b, %b", aluResult, zero, overFlow);
+		input2 = 32'b00010000110001011111110000111010; shamt = 5'b00100; aluOperation = 4'b0110;
+		#1 input1 = 32'b01100; input2 = 32'b00101; aluOperation = 4'b0010;
+		#1 input1 = 32'b11111111111111111111111111111100; input2 = 32'b11111111111111111111111111111101; aluOperation = 4'b0100;
+		#1 input1 = 32'b11111111111111111111111111111100; input2 = 32'b11111111111111111111111111111101; aluOperation = 4'b0101;
+		#1 input1 = 32'b11111111111111111111111111111100; input2 = 32'b11111111111111111111111111111100; aluOperation = 4'b0101;
+		#1 input1 = 32'b11111111111111111111111111111100; input2 = 32'b11111111111111111111111111111101; aluOperation = 4'b0011;
+		#1 input1 = 32'b0011; input2 = 32'b0001; aluOperation = 4'b0011;
+
+end
+endmodule
+
+module ALUtest();
+wire[31:0] w1;
+wire w2;
+wire[31:0] w3; 
+wire[31:0] w4; 
+wire[3:0] w5;
+wire[4:0] w6;
+wire w7;
+ALU falcon(w1, w2, w7, w3, w4, w5, w6);
+testing eagle(w3, w4, w5, w6, w1, w2, w7); 
+endmodule
