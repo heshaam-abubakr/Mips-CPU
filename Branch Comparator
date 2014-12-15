@@ -1,0 +1,26 @@
+module comparator(result, input1, input2);
+output reg result;
+input wire[31:0] input1;
+input wire[31:0] input2;
+
+always@(input1 or input2) begin 
+	if(input1 == input2)
+		result = 1'b1;
+	else
+		result = 1'b0;
+end
+endmodule
+
+module TBcomparator;
+reg[31:0] input1;
+reg[31:0] input2;
+wire result;
+
+comparator hawk(result, input1, input2);
+
+initial begin
+	$monitor($time, " %b", result);
+	input1 = 32'b11; input2 = 32'b10;
+	#1 input1 = 32'b111; input2 = 32'b111;
+end
+endmodule 
