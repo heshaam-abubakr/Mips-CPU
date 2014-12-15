@@ -1,7 +1,7 @@
 //Mips 32 bit ALU
 //@author-> Hesham Mohamed
-//Date: 5/12/2014
-//version 1
+//Date: 14/12/2014
+//version 2
 
 
 module ALU(aluResult, zero, overFlow, input1, input2, aluOperation, shamt);
