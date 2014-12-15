@@ -1,0 +1,27 @@
+module adder(result, input1, input2);
+output reg[31:0] result;
+input [31:0] input1;
+input [31:0] input2;
+always@(input1 or input2)begin
+	result <= input1 + input2;
+end
+endmodule
+
+module TestingAdder(input1, input2, result);
+output reg[31:0] input1;
+output reg[31:0] input2;
+input wire[31:0] result;
+initial begin
+	$monitor($time, " %b", result);
+	input1 = 32'b0; input2 = 32'b0;
+	#1 input1 = 32'b01100; input2 = 32'b10011;
+end
+endmodule
+
+module TBADDER;
+	wire[31:0] w1;
+	wire[31:0] w2;
+	wire[31:0] w3;
+adder delta(w1, w2, w3);
+TestingAdder alpgha(w2, w3, w1);
+endmodule
