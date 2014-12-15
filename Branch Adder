@@ -1,3 +1,9 @@
+//Pipelined Mips Processor Branch Adder
+//@author-> Hesham Mohamed
+//Date: 15/12/2014
+//version 1
+
+
 module adder(result, input1, input2);
 output reg[31:0] result;
 input [31:0] input1;
